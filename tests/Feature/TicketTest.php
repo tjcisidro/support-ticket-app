@@ -8,25 +8,18 @@ use Tests\TestCase;
 use App\Models\Ticket;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\TypeHelper;
 
 class TicketTest extends TestCase
 {
     use WithFaker;
-
-    protected $types = [
-        'technical_issues' => 'task_tech_db',
-        'account_billing' => 'task_accounts_db',
-        'product_service' => 'task_sales_db',
-        'general_inquiry' => 'task_inquiry_db',
-        'feedback' => 'task_feedback_db',
-    ];
 
     protected function setUp(): void
     {
         parent::setUp();
         
         // Run migrations and refresh for all database connections
-        foreach ($this->types as $connection) {
+        foreach (TypeHelper::getAllTypes() as $connection) {
             $this->artisan('migrate:fresh', ['--database' => $connection]);
         }
     }
@@ -34,16 +27,11 @@ class TicketTest extends TestCase
     protected function tearDown(): void
     {
         // Clean up all test databases
-        foreach ($this->types as $connection) {
+        foreach (TypeHelper::getAllTypes() as $connection) {
             \DB::connection($connection)->table('tickets')->truncate();
         }
         
         parent::tearDown();
-    }
-
-    protected function getConnectionForType(string $type): string
-    {
-        return $this->types[$type];
     }
 
     /**
@@ -75,7 +63,7 @@ class TicketTest extends TestCase
             'subject' => 'Test Subject',
             'email' => 'john@example.com',
             'type' => 'technical_issues',
-        ], 'task_tech_db');
+        ], TypeHelper::getDatabaseForType('technical_issues'));
     }
 
     /**
@@ -130,7 +118,7 @@ class TicketTest extends TestCase
         $this->assertDatabaseHas('tickets', [
             'email' => 'jane@example.com',
             'type' => $type,
-        ], $this->getConnectionForType($type));
+        ], TypeHelper::getDatabaseForType($type));
     }
 
     /**
@@ -138,7 +126,7 @@ class TicketTest extends TestCase
      */
     public function test_submit_ticket_for_each_type(): void
     {
-        foreach ($this->types as $type => $connection) {
+        foreach (TypeHelper::getAllTypes() as $type => $connection) {
             $ticketData = [
                 'subject' => "Test {$type}",
                 'description' => "Test description for {$type}",
@@ -158,7 +146,7 @@ class TicketTest extends TestCase
             $this->assertDatabaseHas('tickets', [
                 'type' => $type,
                 'email' => $ticketData['email'],
-            ], $this->getConnectionForType($type));
+            ], TypeHelper::getDatabaseForType($type));
         }
     }
 
@@ -186,6 +174,6 @@ class TicketTest extends TestCase
         $this->assertDatabaseHas('tickets', [
             'email' => 'test@example.com',
             'phone' => null,
-        ], 'task_inquiry_db');
+        ], TypeHelper::getDatabaseForType('general_inquiry'));
     }
 }

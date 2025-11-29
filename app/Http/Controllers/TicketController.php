@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Ticket;
+use App\Helpers\TypeHelper;
 
 class TicketController extends Controller
 {
@@ -26,18 +27,8 @@ class TicketController extends Controller
             'contact_method' => 'required|in:email,phone,either,none',
             'consent' => 'required|accepted',
         ]);
-
-        $types = [
-            'technical_issues' => 'task_tech_db',
-            'account_billing' => 'task_accounts_db',
-            'product_service' => 'task_sales_db',
-            'general_inquiry' => 'task_inquiry_db',
-            'feedback' => 'task_feedback_db',
-        ];
-
-
-
-        $ticket = Ticket::on($types[$validatedData['type']])->create([
+        
+        $ticket = Ticket::on(TypeHelper::getDatabaseForType($validatedData['type']))->create([
             'subject' => $validatedData['subject'],
             'description' => $validatedData['description'],
             'full_name' => $validatedData['full_name'],
