@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Ticket;
 use Database\Factories\TicketFactory;
 use App\Helpers\TypeHelper;
+use Database\Seeders\UserSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $entryCount = 10;
+        $entryCount = 2;
         
         foreach (TypeHelper::getAllTypes() as $type => $connection) {
             for ($i = 0; $i < $entryCount; $i++) {
@@ -23,5 +24,6 @@ class DatabaseSeeder extends Seeder
                 Ticket::on($connection)->create($ticket->toArray());
             }
         }
+        $this->call(UserSeeder::class);
     }
 }

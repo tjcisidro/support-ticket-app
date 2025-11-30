@@ -6,6 +6,10 @@ This will create multiple databases on your MySQL env configuration.
 ```
 php artisan migrate:all
 ```
+To refresh the databases, use:
+```
+php artisan migrate:all --refresh
+```
 
 ## Make attachments work
 You will need to symlink the public path to your storage for file attachments to work.
@@ -17,6 +21,11 @@ php artisan storage:link
 ```
 php artisan test --filter TicketTest
 ```
+
+## Default user and password
+After running the seeders, the default credentials for the admin login should be:
+Email: admin@example.com
+Password: password
 
 ##
 **You can access the ticketing system by accessing /ticketing**

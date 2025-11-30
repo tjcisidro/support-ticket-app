@@ -20,6 +20,7 @@
             <p class="subtitle">Fill out the form below and we'll get back to you as soon as possible</p>
             
             <form action="/submit-ticket" method="POST" enctype="multipart/form-data">
+                @csrf
                 <div class="form-group">
                     <label for="subject">Subject <span class="required">*</span></label>
                     <input type="text" id="subject" name="subject" placeholder="Brief description of your issue" required>

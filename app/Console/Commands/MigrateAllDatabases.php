@@ -26,7 +26,20 @@ class MigrateAllDatabases extends Command
     public function handle()
     {
         $database_connections = ['task_tech_db', 'task_accounts_db', 'task_sales_db', 'task_inquiry_db', 'task_feedback_db'];
-        $command = $this->option('refresh') ? 'migrate:refresh' : 'migrate';
+        $command = $this->option('refresh') ? 'migrate:fresh' : 'migrate';
+
+        $this->info('Starting migration for all databases...');
+        $this->info('Starting migration for global users database...');
+        try {
+            $this->call($command, [
+                '--database' => 'mysql',
+                '--path' => 'database/migrations/users',
+                '--force' => true,
+            ]);
+            $this->info("✓ users database migrated successfully");
+        } catch (\Exception $e) {
+            $this->error("✗ Failed to migrate users database: " . $e->getMessage());
+        }
 
         foreach ($database_connections as $connection) {
             $this->info("Running {$command} on database: {$connection}");
