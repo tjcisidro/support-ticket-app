@@ -25,13 +25,10 @@ php artisan test --filter TicketTest
 ## Default user and password
 After running the seeders, the default credentials for the admin login should be:
 
-Email: admin@example.com
-Password: password
+Email: admin@example.com <br> Password: password
 
 ##
 **You can access the ticketing system by accessing /ticketing**
 ##
 
 **NOTE:** this is not made to run on production servers running on LAMP stacks. The views are intentionally left to use Vite.
-
-
